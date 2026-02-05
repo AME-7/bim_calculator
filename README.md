@@ -39,7 +39,7 @@ BMI is a measure of body fat based on height and weight that applies to adult me
 | Overweight     | 25–29.9   |
 | Obese          | ≥ 30      |
 
-## 📦 Installation
+
 
 
 
