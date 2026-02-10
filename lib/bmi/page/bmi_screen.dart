@@ -17,6 +17,7 @@ class _BmiScreenState extends State<BmiScreen> {
   int age = 22;
   int height = 170;
   bool isMale = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,9 +34,35 @@ class _BmiScreenState extends State<BmiScreen> {
       body: Padding(
         padding: const EdgeInsets.all(13.0),
         child: Column(
-          spacing: 16,
           children: [
-            genderSelectoin(),
+            Expanded(
+              child: Row(
+                children: [
+                  GenderCard(
+                    isSelected: isMale,
+                    text: 'male',
+                    icon: Icons.male,
+                    onTap: () {
+                      setState(() {
+                        isMale = true;
+                      });
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  GenderCard(
+                    isSelected: !isMale,
+                    text: 'female',
+                    icon: Icons.female,
+                    onTap: () {
+                      setState(() {
+                        isMale = false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             HeightCard(
               height: height,
               onChange: (value) {
@@ -44,18 +71,34 @@ class _BmiScreenState extends State<BmiScreen> {
                 });
               },
             ),
-            weightAndAge(),
+            const SizedBox(height: 16),
+            WeightAndAgeSection(
+              weight: weight,
+              age: age,
+              onWeightAdd: () => setState(() {
+                weight++;
+              }),
+              onWeightRemove: () => setState(() {
+                if (weight > 16) weight--;
+              }),
+              onAgeAdd: () => setState(() {
+                age++;
+              }),
+              onAgeRemove: () => setState(() {
+                if (age > 10) age--;
+              }),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Appcolor.primaryColor,
-                minimumSize: Size(double.infinity, 60),
+                minimumSize: const Size(double.infinity, 60),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(10),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               onPressed: () {
                 double result = weight / (height * height / 10000);
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -73,73 +116,43 @@ class _BmiScreenState extends State<BmiScreen> {
       ),
     );
   }
+}
 
-  Expanded genderSelectoin() {
+class WeightAndAgeSection extends StatelessWidget {
+  final int weight;
+  final int age;
+  final VoidCallback onWeightAdd;
+  final VoidCallback onWeightRemove;
+  final VoidCallback onAgeAdd;
+  final VoidCallback onAgeRemove;
+
+  const WeightAndAgeSection({
+    super.key,
+    required this.weight,
+    required this.age,
+    required this.onWeightAdd,
+    required this.onWeightRemove,
+    required this.onAgeAdd,
+    required this.onAgeRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: Row(
-        spacing: 16,
-        children: [
-          GenderCard(
-            isSelected: isMale,
-            text: 'male',
-            icon: Icons.male,
-            onTap: () {
-              setState(() {
-                isMale = true;
-              });
-            },
-          ),
-          GenderCard(
-            isSelected: !isMale,
-            text: 'female',
-            icon: Icons.female,
-            onTap: () {
-              setState(() {
-                isMale = false;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Expanded weightAndAge() {
-    return Expanded(
-      child: Row(
-        spacing: 16,
         children: [
           CounterCard(
             text: 'Weight',
             num: weight,
-            onAdd: () {
-              setState(() {
-                weight++;
-              });
-            },
-            onRemove: () {
-              if (weight > 16) {
-                setState(() {
-                  weight--;
-                });
-              }
-            },
+            onAdd: onWeightAdd,
+            onRemove: onWeightRemove,
           ),
+          const SizedBox(width: 16),
           CounterCard(
             text: 'Age',
             num: age,
-            onAdd: () {
-              setState(() {
-                age++;
-              });
-            },
-            onRemove: () {
-              if (age > 10) {
-                setState(() {
-                  age--;
-                });
-              }
-            },
+            onAdd: onAgeAdd,
+            onRemove: onAgeRemove,
           ),
         ],
       ),
